@@ -182,6 +182,8 @@ int syslogin_write_entry(struct logininfo *li);
 int wtmp_get_entry(struct logininfo *li);
 int wtmpx_get_entry(struct logininfo *li);
 
+struct passwd *dropbear_getpwnam(const char *username);
+
 /* pick the shortest string */
 #define MIN_SIZEOF(s1,s2) ( sizeof(s1) < sizeof(s2) ? sizeof(s1) : sizeof(s2) )
 
@@ -275,7 +277,8 @@ login_init_entry(struct logininfo *li, int pid, const char *username,
 
 	if (username) {
 		strlcpy(li->username, username, sizeof(li->username));
-		pw = getpwnam(li->username);
+
+		pw = dropbear_getpwnam(li->username);
 		if (pw == NULL)
 			dropbear_exit("login_init_entry: Cannot find user \"%s\"",
 					li->username);

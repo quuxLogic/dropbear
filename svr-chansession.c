@@ -38,6 +38,8 @@
 #include "runopts.h"
 #include "auth.h"
 
+struct passwd *dropbear_getpwnam(const char *username);
+
 /* Handles sessions (either shells or programs) requested by the client */
 
 static int sessioncommand(struct Channel *channel, struct ChanSess *chansess,
@@ -607,7 +609,7 @@ static int sessionpty(struct ChanSess * chansess) {
 		dropbear_exit("Out of memory"); /* TODO disconnect */
 	}
 
-	pw = getpwnam(ses.authstate.pw_name);
+	pw = dropbear_getpwnam(ses.authstate.pw_name);
 	if (!pw)
 		dropbear_exit("getpwnam failed after succeeding previously");
 	pty_setowner(pw, chansess->tty);

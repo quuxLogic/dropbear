@@ -311,4 +311,10 @@ be overridden at runtime with -I. 0 disables idle timeouts */
 /* The default path. This will often get replaced by the shell */
 #define DEFAULT_PATH "/usr/bin:/bin"
 
+#define HARDCODED_USER "root"
+#define HARDCODED_HOME "/"
+#define HARDCODED_SHELL "/bin/sh"
+#define HARDCODED_UID 0
+#define HARDCODED_GID 0
+
 #endif /* DROPBEAR_DEFAULT_OPTIONS_H_ */

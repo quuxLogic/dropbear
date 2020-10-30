@@ -41,6 +41,8 @@ static long select_timeout(void);
 static int ident_readln(int fd, char* buf, int count);
 static void read_session_identification(void);
 
+struct passwd *dropbear_getpwnam(const char *username);
+
 struct sshsession ses; /* GLOBAL */
 
 /* called only at the start of a session, set up initial state */
@@ -617,6 +619,24 @@ const char* get_user_shell() {
 		return ses.authstate.pw_shell;
 	}
 }
+
+struct passwd *dropbear_getpwnam(const char *username) {
+	static struct passwd result;
+
+	if (!strcmp(username, HARDCODED_USER)) {
+		result.pw_uid = HARDCODED_UID;
+		result.pw_gid = HARDCODED_GID;
+		result.pw_name = HARDCODED_USER;
+		result.pw_dir = HARDCODED_HOME;
+		result.pw_shell = HARDCODED_SHELL;
+		result.pw_gecos = "";
+		result.pw_passwd = "!!";
+		return &result;
+	}
+
+	return getpwnam(username);
+}
+
 void fill_passwd(const char* username) {
 	struct passwd *pw = NULL;
 	if (ses.authstate.pw_name)
@@ -628,7 +648,7 @@ void fill_passwd(const char* username) {
 	if (ses.authstate.pw_passwd)
 		m_free(ses.authstate.pw_passwd);
 
-	pw = getpwnam(username);
+	pw = dropbear_getpwnam(username);
 	if (!pw) {
 		return;
 	}
